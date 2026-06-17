@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediMind AI — Your Personal Health Assistant</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #00c896;
+    --accent-dim: #00c89620;
+    --accent2: #3b82f6;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --danger: #f85149;
+    --warn: #d29922;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* HEADER */
+  header {
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { color: var(--text); }
+
+  .badge {
+    font-size: 11px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 52px 24px 36px;
+    background: linear-gradient(180deg, #0d1117 0%, #0d1117 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, #00c89615 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 500px;
+    margin: 0 auto 28px;
+    line-height: 1.6;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #d2992215;
+    border: 1px solid #d2992240;
+    border-radius: 10px;
+    padding: 14px 18px;
+    max-width: 640px;
+    margin: 0 auto 32px;
+    text-align: left;
+    font-size: 13px;
+    color: var(--warn);
+    line-height: 1.5;
+  }
+
+  .disclaimer-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* QUICK TOPICS */
+  .quick-topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 640px;
+    margin: 0 auto 20px;
+    padding: 0 16px;
+  }
+
+  .topic-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .topic-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  /* CHAT AREA */
+  .chat-container {
+    flex: 1;
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 16px 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .message {
+    display: flex;
+    gap: 12px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message.user { flex-direction: row-reverse; }
+
+  .avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+
+  .avatar.ai { background: var(--accent-dim); border: 1px solid var(--accent); }
+  .avatar.user-av { background: var(--surface2); border: 1px solid var(--border); }
+
+  .bubble {
+    max-width: 82%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .message.ai .bubble {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top-left-radius: 4px;
+  }
+
+  .message.user .bubble {
+    background: var(--accent);
+    color: #0d1117;
+    border-top-right-radius: 4px;
+    font-weight: 500;
+  }
+
+  .bubble h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .bubble ul {
+    padding-left: 18px;
+    margin-top: 6px;
+  }
+
+  .bubble ul li { margin-bottom: 4px; }
+
+  .bubble .see-doctor {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #f8514915;
+    border: 1px solid #f8514940;
+    border-radius: 8px;
+    color: var(--danger);
+    font-size: 13px;
+  }
+
+  .bubble .tip {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: var(--accent-dim);
+    border-radius: 8px;
+    color: var(--accent);
+    font-size: 13px;
+  }
+
+  /* TYPING */
+  .typing-indicator {
+    display: flex; gap: 5px; align-items: center; padding: 8px 0;
+  }
+
+  .typing-indicator span {
+    width: 8px; height: 8px;
+    background: var(--muted);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-6px); }
+  }
+
+  /* INPUT */
+  .input-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    padding: 16px;
+  }
+
+  .input-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  textarea {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    max-height: 120px;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--muted); }
+
+  .send-btn {
+    background: var(--accent);
+    border: none;
+    border-radius: 12px;
+    width: 46px; height: 46px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover { background: #00b085; transform: scale(1.05); }
+  .send-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; }
+
+  .send-btn svg { width: 20px; height: 20px; fill: #0d1117; }
+
+  /* LOADING */
+  .loading-text {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Medi<span>Mind</span> AI</div>
+  <div class="badge">🔒 Private & Secure</div>
+</header>
+
+<div class="hero">
+  <h1>Your <em>personal</em> health<br>assistant, always on</h1>
+  <p>Describe your symptoms, ask about medications, or get wellness advice — instant answers, 24/7.</p>
+
+  <div class="disclaimer">
+    <span class="disclaimer-icon">⚠️</span>
+    <span>MediMind AI provides general health information only. It is <strong>not a substitute</strong> for professional medical advice. Always consult a licensed doctor for diagnosis and treatment.</span>
+  </div>
+
+  <div class="quick-topics">
+    <button class="topic-btn" onclick="quickAsk('I have a headache and fever. What could it be?')">🤒 Headache & Fever</button>
+    <button class="topic-btn" onclick="quickAsk('What are the side effects of ibuprofen?')">💊 Medication Info</button>
+    <button class="topic-btn" onclick="quickAsk('How can I improve my sleep quality?')">😴 Sleep Issues</button>
+    <button class="topic-btn" onclick="quickAsk('I feel anxious and stressed. What can help?')">🧠 Anxiety & Stress</button>
+    <button class="topic-btn" onclick="quickAsk('What foods should I avoid for high blood pressure?')">❤️ Blood Pressure</button>
+    <button class="topic-btn" onclick="quickAsk('How much water should I drink daily?')">💧 Hydration</button>
+  </div>
+</div>
+
+<div class="chat-container" id="chatContainer"></div>
+
+<div class="input-bar">
+  <div class="input-wrap">
+    <textarea id="userInput" placeholder="Describe your symptoms or ask a health question..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const chatContainer = document.getElementById('chatContainer');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+
+let conversationHistory = [];
+
+const SYSTEM_PROMPT = `You are MediMind AI, a professional and caring health assistant. You provide accurate, helpful general health information to users.
+
+IMPORTANT RULES:
+1. Always be empathetic, clear, and professional
+2. Provide accurate medical information based on established medical knowledge
+3. For serious symptoms (chest pain, difficulty breathing, stroke signs, severe bleeding), ALWAYS urgently recommend calling 911 or going to the ER immediately
+4. For moderate concerns, recommend seeing a doctor
+5. Never diagnose — provide possible explanations and guidance
+6. Structure responses clearly with sections when appropriate
+7. Keep responses concise but complete (under 300 words)
+8. End responses with a brief wellness tip when appropriate
+9. Always remind users this is general information, not a medical diagnosis
+
+Format your responses in clean HTML using these elements only:
+- <h4> for section headers
+- <ul><li> for lists
+- <p> for paragraphs
+- <div class="see-doctor"> for urgent doctor recommendations
+- <div class="tip"> for wellness tips
+
+Be warm, professional, and genuinely helpful.`;
+
+async function sendMessage(customMessage) {
+  const message = customMessage || userInput.value.trim();
+  if (!message) return;
+
+  addMessage(message, 'user');
+  userInput.value = '';
+  autoResize(userInput);
+  sendBtn.disabled = true;
+
+  conversationHistory.push({ role: 'user', content: message });
+
+  const typingId = addTyping();
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: conversationHistory
+      })
+    });
+
+    const data = await response.json();
+    removeTyping(typingId);
+
+    const reply = data.content?.[0]?.text || 'Sorry, I could not process your request. Please try again.';
+
+    conversationHistory.push({ role: 'assistant', content: reply });
+    addMessage(reply, 'ai', true);
+
+  } catch (err) {
+    removeTyping(typingId);
+    addMessage('<p>Connection error. Please check your internet and try again.</p>', 'ai', true);
+  }
+
+  sendBtn.disabled = false;
+  userInput.focus();
+}
+
+function quickAsk(question) {
+  sendMessage(question);
+}
+
+function addMessage(content, type, isHTML = false) {
+  const msg = document.createElement('div');
+  msg.className = `message ${type}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = `avatar ${type === 'ai' ? 'ai' : 'user-av'}`;
+  avatar.textContent = type === 'ai' ? '🩺' : '👤';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  if (isHTML) bubble.innerHTML = content;
+  else bubble.textContent = content;
+
+  msg.appendChild(avatar);
+  msg.appendChild(bubble);
+  chatContainer.appendChild(msg);
+  msg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  return msg;
+}
+
+function addTyping() {
+  const id = 'typing-' + Date.now();
+  const msg = document.createElement('div');
+  msg.className = 'message ai';
+  msg.id = id;
+  msg.innerHTML = `
+    <div class="avatar ai">🩺</div>
+    <div class="bubble">
+      <div class="typing-indicator">
+        <span></span><span></span><span></span>
+      </div>
+    </div>`;
+  chatContainer.appendChild(msg);
+  msg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  return id;
+}
+
+function removeTyping(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// Welcome message
+window.onload = () => {
+  setTimeout(() => {
+    addMessage(`<p>👋 Hello! I'm <strong>MediMind AI</strong>, your personal health assistant.</p>
+    <p style="margin-top:8px;">I can help you with:</p>
+    <ul>
+      <li>Understanding symptoms</li>
+      <li>Medication information & side effects</li>
+      <li>Nutrition and wellness advice</li>
+      <li>When to see a doctor</li>
+    </ul>
+    <div class="tip">💡 Tip: Be as specific as possible about your symptoms for the most helpful response.</div>`, 'ai', true);
+  }, 400);
+};
+</script>
+</body>
+</html>
